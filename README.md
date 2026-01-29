@@ -1,6 +1,6 @@
 # geoart
 
-simple tool to make cool map posters from openstreetmap data inspired from [text](https://github.com/originalankur/maptoposter).
+simple tool to make cool map posters from openstreetmap data inspired from [maptoposter](https://github.com/originalankur/maptoposter).
 
 ## features
 - dark mode ui
