@@ -1,0 +1,29 @@
+{
+  "name": "geoart",
+  "version": "1.0.0",
+  "description": "A Node.js library for geoart",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "geo",
+    "art"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@turf/turf": "^7.3.2",
+    "canvas": "^3.2.1",
+    "express": "^5.2.1",
+    "osmtogeojson": "^3.0.0-beta.5"
+  }
+}
