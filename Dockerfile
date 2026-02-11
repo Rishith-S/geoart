@@ -24,8 +24,11 @@ COPY . .
 # Build TypeScript
 RUN npm run build
 
+# Set default port environment variable
+ENV PORT=8080
+
 # Expose port
-EXPOSE 3000
+EXPOSE 8080
 
 # Start server
 CMD ["node", "dist/index.js"]

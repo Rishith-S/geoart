@@ -7,7 +7,7 @@ import { renderPoster } from "./render";
 import { geocodeCity, reverseGeocode } from "./geocode";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -18,6 +18,11 @@ app.use((req, res, next) => {
 // Health check endpoint for cloud providers
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
+});
+
+// Root route for easy verification
+app.get('/', (req, res) => {
+  res.send('GeoArt Generator is running!');
 });
 
 app.use(express.static('public'));
