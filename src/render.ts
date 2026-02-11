@@ -165,7 +165,7 @@ function drawText(ctx: any, w: number, h: number, title: string, theme: Theme, s
 
   ctx.fillStyle = color;
   ctx.textBaseline = "top";
-  ctx.font = `700 ${size}px ${family}`;
+  ctx.font = `500 ${size}px ${family}`;
 
   const text = title.toUpperCase();
   const widths = [...text].map((ch) => ctx.measureText(ch).width);
