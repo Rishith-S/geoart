@@ -84,14 +84,14 @@ async function generatePoster(params : {lat?:number, lon?:number, radius:number,
     const { west, south, east, north } = getEdgesFromCenterRadius(lat!, lon!, radius);
     const project = makeProjector({ west, south, east, north, width, height });
     
-    const png = await renderPoster({
+    const png = renderPoster({
       features,
       width,
       height,
       project,
       themePath: themes[themeName],
       title: city,
-      lonlan: `${lat?.toString().slice(0,Math.min(6,lat.toString().length))}° ${lat!>=0 ? 'N' : 'S'} / ${lon?.toString().slice(0,Math.min(6,lon.toString().length))}° ${lon!>=0 ? 'E' : 'W'}`,
+      lonlan: `${lat?.toString().slice(0, Math.min(6, lat.toString().length))}° ${lat! >= 0 ? 'N' : 'S'} / ${lon?.toString().slice(0, Math.min(6, lon.toString().length))}° ${lon! >= 0 ? 'E' : 'W'}`,
       country: country
     });
 
@@ -117,8 +117,8 @@ app.get("/render", async (req: express.Request, res: express.Response) => {
       gmail: email as string,
       city: city as string,
       country: country as string,
-      width: width ? parseInt(width as string) : undefined,
-      height: height ? parseInt(height as string) : undefined
+      width: width ? parseInt(width as string) : 3000,
+      height: height ? parseInt(height as string) : 4000
     });
 
     if (!png) {
