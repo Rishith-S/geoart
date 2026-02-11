@@ -20,9 +20,9 @@ app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-// Root route for easy verification
+// Root route to serve the frontend
 app.get('/', (req, res) => {
-  res.send('GeoArt Generator is running!');
+  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
 app.use(express.static('public'));
@@ -48,8 +48,10 @@ const themes: Record<string, string> = {
   "warm_beige": "theme/warm_beige.json"
 };
 
-async function generatePoster(params : {lat?:number, lon?:number, radius:number, themeName:string, gmail:string, city?:string, country?:string}) {
+async function generatePoster(params : {lat?:number, lon?:number, radius:number, themeName:string, gmail:string, city?:string, country?:string, width?: number, height?: number}) {
   console.log(`generatePoster called with:`, JSON.stringify(params));
+  console.log(`Memory usage before render: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+  
   let lat = params.lat;
   let lon = params.lon;
   let city = params.city;
@@ -74,15 +76,15 @@ async function generatePoster(params : {lat?:number, lon?:number, radius:number,
   }
 
   if (city && country) {
-    const width = 5000;
-    const height = 6000;
+    const width = params.width || 3000;  // Reduced default from 5000 to 3000 for stability
+    const height = params.height || 4000; // Reduced default from 6000 to 4000 for stability
 
     const features = await fetchFeaturesByRadius({ lat: lat!, lon: lon!, radius });
 
     const { west, south, east, north } = getEdgesFromCenterRadius(lat!, lon!, radius);
     const project = makeProjector({ west, south, east, north, width, height });
     
-    return renderPoster({
+    const png = await renderPoster({
       features,
       width,
       height,
@@ -92,13 +94,16 @@ async function generatePoster(params : {lat?:number, lon?:number, radius:number,
       lonlan: `${lat?.toString().slice(0,Math.min(6,lat.toString().length))}° ${lat!>=0 ? 'N' : 'S'} / ${lon?.toString().slice(0,Math.min(6,lon.toString().length))}° ${lon!>=0 ? 'E' : 'W'}`,
       country: country
     });
+
+    console.log(`Memory usage after render: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+    return png;
   }
 }
 
 app.get("/render", async (req: express.Request, res: express.Response) => {
   console.log("Render request received:", req.query);
   try {
-    const { lat, lon, radius, theme, email, city, country } = req.query;
+    const { lat, lon, radius, theme, email, city, country, width, height } = req.query;
 
     if (!email) {
       return res.status(400).send("Email is required for geocoding attribution.");
@@ -107,11 +112,13 @@ app.get("/render", async (req: express.Request, res: express.Response) => {
     const png = await generatePoster({
       lat: lat ? parseFloat(lat as string) : undefined,
       lon: lon ? parseFloat(lon as string) : undefined,
-      radius: 8000,
+      radius: radius ? parseInt(radius as string) : 5000, // Reduced default from 8000
       themeName: (theme as string) || "neon_cyberpunk",
       gmail: email as string,
       city: city as string,
-      country: country as string
+      country: country as string,
+      width: width ? parseInt(width as string) : undefined,
+      height: height ? parseInt(height as string) : undefined
     });
 
     if (!png) {
@@ -126,8 +133,11 @@ app.get("/render", async (req: express.Request, res: express.Response) => {
   }
 });
 
-app.listen(Number(port), "0.0.0.0", () => {
+const server = app.listen(Number(port), "0.0.0.0", () => {
   console.log(`Server started! Listening at port ${port}`);
   console.log(`Environment PORT: ${process.env.PORT}`);
   console.log(`Current working directory: ${process.cwd()}`);
 });
+
+// Set server timeout to 5 minutes to handle long Overpass API requests and rendering
+server.timeout = 300000;
