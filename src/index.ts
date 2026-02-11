@@ -9,6 +9,17 @@ import { geocodeCity, reverseGeocode } from "./geocode";
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Health check endpoint for cloud providers
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.use(express.static('public'));
 app.use('/out', express.static('out'));
 
@@ -33,6 +44,7 @@ const themes: Record<string, string> = {
 };
 
 async function generatePoster(params : {lat?:number, lon?:number, radius:number, themeName:string, gmail:string, city?:string, country?:string}) {
+  console.log(`generatePoster called with:`, JSON.stringify(params));
   let lat = params.lat;
   let lon = params.lon;
   let city = params.city;
@@ -78,7 +90,8 @@ async function generatePoster(params : {lat?:number, lon?:number, radius:number,
   }
 }
 
-app.get("/render", async (req, res) => {
+apconsole.log("Render request received:", req.query);
+  p.get("/render", async (req, res) => {
   try {
     const { lat, lon, radius, theme, email, city, country } = req.query;
 
@@ -109,5 +122,7 @@ app.get("/render", async (req, res) => {
 });
 
 app.listen(Number(port), "0.0.0.0", () => {
-  console.log(`listening at ${port} port`);
+  console.log(`Server started! Listening at port ${port}`);
+  console.log(`Environment PORT: ${process.env.PORT}`);
+  console.log(`Current working directory: ${process.cwd()}`);
 });
