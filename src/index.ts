@@ -90,8 +90,8 @@ async function generatePoster(params : {lat?:number, lon?:number, radius:number,
   }
 }
 
-apconsole.log("Render request received:", req.query);
-  p.get("/render", async (req, res) => {
+app.get("/render", async (req: express.Request, res: express.Response) => {
+  console.log("Render request received:", req.query);
   try {
     const { lat, lon, radius, theme, email, city, country } = req.query;
 
