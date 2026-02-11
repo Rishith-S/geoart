@@ -7,7 +7,7 @@ import { renderPoster } from "./render";
 import { geocodeCity, reverseGeocode } from "./geocode";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 app.use('/out', express.static('out'));
@@ -108,6 +108,6 @@ app.get("/render", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(Number(port), "0.0.0.0", () => {
   console.log(`listening at ${port} port`);
 });
