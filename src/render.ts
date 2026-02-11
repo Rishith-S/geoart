@@ -239,8 +239,8 @@ export function renderPoster(params: {
     strokeLine(ctx, r?.f!, params.project, r?.roadColor!, r?.roadWidth!);
   }
 
-  const cropWidth = 3000;
-  const cropHeight = 4000;
+  const cropWidth = 2200;
+  const cropHeight = 3500;
 
   const sx = (params.width - cropWidth) / 2;
   const sy = (params.height - cropHeight) / 2;
